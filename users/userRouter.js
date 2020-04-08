@@ -16,7 +16,7 @@ router.post('/', (req, res) => {
 });
 
 router.post('/:id/posts', (req, res) => {
-  const id = req.params.id
+  //const id = req.params.id
   postDb.insert(req.body)
   .then((newPost)=>{
     res.status(200).json(newPost)
@@ -58,7 +58,13 @@ router.get('/:id/posts', (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-  // do your magic!
+  userDb.remove(req.params.id)
+  .then((delUser)=>{
+    res.status(200).json(delUser)
+  })
+  .catch((error)=>{
+    res.status(500).json({error: "The user could not be deleted"})
+  })
 });
 
 router.put('/:id', (req, res) => {
