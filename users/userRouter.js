@@ -1,6 +1,7 @@
 const express = require('express');
 
 const userDb = require("./userDb.js");
+const postDb = require("../posts/postDb");
 
 const router = express.Router();
 
@@ -15,7 +16,15 @@ router.post('/', (req, res) => {
 });
 
 router.post('/:id/posts', (req, res) => {
-  // do your magic!
+  const id = req.params.id
+  postDb.insert(req.body)
+  .then((newPost)=>{
+    res.status(200).json(newPost)
+  })
+  .catch((error)=>{
+    console.log("postpost error",error)
+    res.status(500).json({error: "The Post could not be saved"})
+  })
 });
 
 router.get('/', (req, res) => {
