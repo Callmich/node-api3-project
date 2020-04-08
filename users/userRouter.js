@@ -15,7 +15,7 @@ router.post('/', (req, res) => {
   })
 });
 
-router.post('/:id/posts', (req, res) => {
+router.post('/:id/posts', validateUserId, (req, res) => {
   //const id = req.params.id
   postDb.insert(req.body)
   .then((newPost)=>{
@@ -37,7 +37,7 @@ router.get('/', (req, res) => {
   })
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', validateUserId, (req, res) => {
   userDb.getById(req.params.id)
   .then((user)=>{
     res.status(200).json(user)
@@ -47,7 +47,7 @@ router.get('/:id', (req, res) => {
   })
 });
 
-router.get('/:id/posts', (req, res) => {
+router.get('/:id/posts', validateUserId, (req, res) => {
   userDb.getUserPosts(req.params.id)
   .then((posts)=>{
     res.status(200).json(posts)
@@ -57,7 +57,7 @@ router.get('/:id/posts', (req, res) => {
   })
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validateUserId, (req, res) => {
   userDb.remove(req.params.id)
   .then((delUser)=>{
     res.status(200).json(delUser)
@@ -67,7 +67,7 @@ router.delete('/:id', (req, res) => {
   })
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', validateUserId, (req, res) => {
   userDb.update(req.params.id, req.body)
   .then((upUser)=>{
     res.status(200).json(upUser)
@@ -79,12 +79,24 @@ router.put('/:id', (req, res) => {
 
 //custom middleware
 
+// validateUserId validates the user id on every request that expects a user id parameter
+// if the id parameter is valid, store that user object as req.user
+// if the id parameter does not match any user id in the database, cancel the request and respond with status 400 and { message: "invalid user id" }
+
 function validateUserId(req, res, next) {
-  // do your magic!
+  userDb.getById(req.params.id)
+  .then((userId) => {
+    if(userId){
+      next();
+    }else{
+      res.status(400).json({message: "Invalid user id"})
+    }
+  })
+  
 }
 
 function validateUser(req, res, next) {
-  // do your magic!
+
 }
 
 function validatePost(req, res, next) {
