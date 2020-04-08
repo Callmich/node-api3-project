@@ -68,7 +68,13 @@ router.delete('/:id', (req, res) => {
 });
 
 router.put('/:id', (req, res) => {
-  // do your magic!
+  userDb.update(req.params.id, req.body)
+  .then((upUser)=>{
+    res.status(200).json(upUser)
+  })
+  .catch((error)=>{
+    res.status(500).json({error: "user could not be deleted"})
+  })
 });
 
 //custom middleware
