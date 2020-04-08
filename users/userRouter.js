@@ -33,7 +33,13 @@ router.get('/:id', (req, res) => {
 });
 
 router.get('/:id/posts', (req, res) => {
-  // do your magic!
+  userDb.getUserPosts(req.params.id)
+  .then((posts)=>{
+    res.status(200).json(posts)
+  })
+  .catch((error)=>{
+    res.status(500).json({error: "The user's posts could not be retrieved"})
+  })
 });
 
 router.delete('/:id', (req, res) => {
