@@ -5,7 +5,13 @@ const userDb = require("./userDb.js");
 const router = express.Router();
 
 router.post('/', (req, res) => {
-  // do your magic!
+  userDb.insert(req.body)
+  .then((newUser)=>{
+    res.status(200).json(newUser)
+  })
+  .catch((error)=>{
+    res.status(500).json({error: "The user could not be saved."})
+  })
 });
 
 router.post('/:id/posts', (req, res) => {
