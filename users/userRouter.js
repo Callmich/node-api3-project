@@ -5,7 +5,7 @@ const postDb = require("../posts/postDb");
 
 const router = express.Router();
 
-router.post('/', (req, res) => {
+router.post('/', validateUser, (req, res) => {
   userDb.insert(req.body)
   .then((newUser)=>{
     res.status(200).json(newUser)
@@ -86,7 +86,10 @@ router.put('/:id', validateUserId, (req, res) => {
 function validateUserId(req, res, next) {
   userDb.getById(req.params.id)
   .then((userId) => {
+    // console.log("is this it?",userId)
     if(userId){
+      req.user = userId;
+      console.log("Req.user", req.user)
       next();
     }else{
       res.status(400).json({message: "Invalid user id"})
@@ -95,8 +98,21 @@ function validateUserId(req, res, next) {
   
 }
 
-function validateUser(req, res, next) {
+// validateUser validates the body on a request to create a new user
+// if the request body is missing, cancel the request and respond with status 400 and { message: "missing user data" }
+// if the request body is missing the required name field, cancel the request and respond with status 400 and { message: "missing required name field" }
 
+function validateUser(req, res, next) {
+  console.log("req.body",req.body)
+  if(Object.keys(req.body).length >= 1){
+    if(req.body.name){
+      next()
+    }else{
+      res.status(400).json({message: "missing required name field"})
+    }
+  }else{
+    res.status(400).json({message: "missing user data"})
+  }
 }
 
 function validatePost(req, res, next) {
