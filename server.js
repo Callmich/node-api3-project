@@ -12,7 +12,8 @@ server.use("/api/user", userRouter)
 server.use("/api/user/post", postRouter)
 
 server.get('/', (req, res) => {
-  res.send(`<h2>Let's write some middleware!</h2>`);
+  const message = process.env.MESSAGE || "This is if env doesn't work- set up MESSAGE in Heroku";
+  res.send(`<h2>Let's write some middleware! Message from .env file: ${message}</h2>`);
 });
 
 //custom middleware
